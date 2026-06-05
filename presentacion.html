@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fase 2 — Mapa Estratégico de Evolución del Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a2230;
+    --ink-soft:#3a4456;
+    --muted:#6b7689;
+    --line:#dfe3ea;
+    --paper:#f6f4ef;
+    --paper-2:#fbfaf7;
+    --card:#ffffff;
+    --gold:#b08642;
+    --gold-soft:#c9a55f;
+    --navy:#1f3a52;
+    --navy-deep:#16293a;
+    --teal:#2f6b6b;
+    --focus:#1f3a52;
+    --focus-bg:#eef2f5;
+    --shadow:0 1px 2px rgba(22,41,58,.04), 0 8px 30px rgba(22,41,58,.07);
+    --shadow-lg:0 2px 6px rgba(22,41,58,.06), 0 20px 50px rgba(22,41,58,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  body{
+    font-family:'IBM Plex Sans',sans-serif;
+    background:
+      radial-gradient(1200px 600px at 85% -5%, rgba(176,134,66,.07), transparent 60%),
+      radial-gradient(900px 500px at 0% 100%, rgba(31,58,82,.06), transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    line-height:1.5;
+    padding:48px 28px 72px;
+  }
+  .sheet{max-width:1180px;margin:0 auto;}
+
+  /* ---------- shared ---------- */
+  .eyebrow{
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;
+  }
+  .kicker-num{
+    font-family:'Fraunces',serif;font-weight:600;
+    color:var(--gold-soft);
+  }
+  .blocklabel{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;margin-bottom:18px;
+  }
+  .blocklabel .n{
+    font-family:'Fraunces',serif;font-size:14px;color:var(--gold);
+    border:1px solid var(--line);border-radius:50%;
+    width:26px;height:26px;display:grid;place-items:center;letter-spacing:0;
+    background:var(--card);
+  }
+  h2.block-title{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(22px,2.4vw,30px);line-height:1.12;
+    color:var(--ink);letter-spacing:-.01em;
+  }
+  .lede{font-family:'Newsreader',serif;color:var(--ink-soft);font-size:17px;}
+
+  section{margin-top:54px;}
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    border-top:3px solid var(--navy-deep);
+    padding-top:26px;
+  }
+  .mast-top{
+    display:flex;justify-content:space-between;align-items:baseline;
+    flex-wrap:wrap;gap:12px;
+    border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:30px;
+  }
+  .brand{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;}
+  .brand b{color:var(--gold);}
+  .mast-meta{font-size:12px;letter-spacing:.05em;color:var(--muted);}
+  h1{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(34px,5.4vw,60px);line-height:1.02;
+    letter-spacing:-.02em;color:var(--navy-deep);max-width:18ch;
+  }
+  h1 .ph{color:var(--gold);}
+  .subtitle{
+    font-family:'Newsreader',serif;font-style:italic;
+    font-size:clamp(17px,2vw,22px);color:var(--ink-soft);
+    margin-top:18px;max-width:46ch;
+  }
+
+  /* ---------- flow rail ---------- */
+  .flowrail{
+    display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;
+    padding:16px 18px;background:var(--paper-2);border:1px solid var(--line);
+    border-radius:12px;
+  }
+  .flowrail .step{
+    font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;display:flex;align-items:center;gap:10px;
+  }
+  .flowrail .step .dot{width:6px;height:6px;border-radius:50%;background:var(--gold-soft);}
+  .flowrail .sep{color:var(--line);font-weight:400;}
+  .flowrail .step.active{color:var(--navy);}
+
+  /* ---------- block 1 : starting point ---------- */
+  .start-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:34px;align-items:start;}
+  .start-statement{
+    font-family:'Newsreader',serif;font-size:19px;color:var(--ink-soft);
+    line-height:1.5;border-left:2px solid var(--gold);padding-left:20px;
+  }
+  .fronts{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .front{
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:16px 16px 15px;box-shadow:var(--shadow);
+  }
+  .front .tick{
+    font-size:10px;letter-spacing:.12em;color:var(--teal);font-weight:600;
+    display:flex;align-items:center;gap:6px;margin-bottom:7px;text-transform:uppercase;
+  }
+  .front .tick::before{content:"";width:14px;height:14px;border-radius:50%;
+    background:radial-gradient(circle at 50% 50%, var(--teal) 0 4px, transparent 5px);
+    border:1.5px solid var(--teal);box-sizing:border-box;}
+  .front h4{font-size:15px;font-weight:600;color:var(--ink);}
+  .front .live{font-size:11px;color:var(--muted);margin-top:3px;}
+
+  /* ---------- block 2 : levels ---------- */
+  .levels{display:grid;grid-template-columns:1fr 1fr 1.45fr;gap:16px;align-items:stretch;}
+  .level{
+    border-radius:14px;padding:24px 22px;position:relative;
+    border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);
+    display:flex;flex-direction:column;
+  }
+  .level .lvl-tag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;}
+  .level h3{font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin:6px 0 14px;color:var(--ink);}
+  .level ul{list-style:none;display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+  .level li{
+    font-size:11.5px;color:var(--ink-soft);background:var(--paper);
+    border:1px solid var(--line);border-radius:20px;padding:4px 11px;
+  }
+  .level .note{
+    margin-top:auto;font-family:'Newsreader',serif;font-style:italic;
+    font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:13px;
+  }
+  .level.dim{opacity:.92;}
+  .level.focus{
+    background:linear-gradient(160deg,var(--navy) 0%, var(--navy-deep) 100%);
+    border-color:var(--navy-deep);box-shadow:var(--shadow-lg);transform:translateY(-6px);
+  }
+  .level.focus .lvl-tag{color:var(--gold-soft);}
+  .level.focus h3{color:#fff;font-size:21px;}
+  .level.focus li{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#eef2f5;}
+  .level.focus .note{color:#d8dee6;border-color:rgba(255,255,255,.16);font-style:normal;font-weight:500;}
+  .focus-flag{
+    position:absolute;top:-13px;right:22px;background:var(--gold);color:#fff;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+    padding:5px 12px;border-radius:20px;box-shadow:var(--shadow);
+  }
+
+  /* ---------- block 3 : limitante ---------- */
+  .limit{
+    background:linear-gradient(180deg,var(--paper-2),var(--card));
+    border:1px solid var(--line);border-left:4px solid var(--gold);
+    border-radius:16px;padding:38px 40px;box-shadow:var(--shadow-lg);
+    display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:center;
+  }
+  .limit-core .lab{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;}
+  .limit-core .big{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(26px,3.4vw,40px);
+    line-height:1.05;color:var(--navy-deep);letter-spacing:-.01em;margin:10px 0 22px;
+  }
+  .limit-core .impact{
+    font-family:'Newsreader',serif;font-size:17px;color:var(--ink-soft);line-height:1.5;
+  }
+  .limit-core .impact b{color:var(--ink);font-weight:600;}
+  .subcomp{display:flex;flex-direction:column;gap:0;}
+  .subcomp .row{
+    display:flex;gap:14px;align-items:baseline;padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .subcomp .row:last-child{border-bottom:none;}
+  .subcomp .row .i{font-family:'Fraunces',serif;color:var(--gold-soft);font-size:14px;min-width:22px;font-weight:600;}
+  .subcomp .row .t{font-size:14.5px;color:var(--ink-soft);font-weight:500;}
+
+  /* ---------- block 4 : capabilities ---------- */
+  .caps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .cap{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:24px 20px;box-shadow:var(--shadow);display:flex;flex-direction:column;
+    position:relative;overflow:hidden;
+  }
+  .cap::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--bar,var(--gold));}
+  .cap .role{
+    align-self:flex-start;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    font-weight:700;color:#fff;background:var(--bar,var(--gold));padding:4px 11px;border-radius:20px;margin-bottom:16px;
+  }
+  .cap h4{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--ink);line-height:1.12;margin-bottom:14px;min-height:2.2em;}
+  .cap ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+  .cap li{font-size:12.5px;color:var(--muted);padding-left:16px;position:relative;line-height:1.35;}
+  .cap li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:var(--bar,var(--gold));opacity:.55;}
+  .cap.c1{--bar:#7a5a2a;}
+  .cap.c2{--bar:#2f6b6b;}
+  .cap.c3{--bar:#1f3a52;}
+  .cap.c4{--bar:#9b9085;}
+  .cap.c4 h4,.cap.c4 .role{opacity:.92;}
+  .cap-foot{margin-top:14px;font-size:11px;color:var(--muted);font-style:italic;font-family:'Newsreader',serif;}
+
+  /* ---------- block 5 : horizon ---------- */
+  .horizon{display:grid;grid-template-columns:1fr 1fr;gap:22px;position:relative;}
+  .horizon::before{
+    content:"";position:absolute;left:50%;top:30px;bottom:30px;width:1px;
+    background:repeating-linear-gradient(var(--line) 0 6px, transparent 6px 12px);
+  }
+  .hcol{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 28px 26px;box-shadow:var(--shadow);}
+  .hcol .hbadge{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;}
+  .hcol .span{font-family:'Fraunces',serif;font-weight:700;font-size:34px;color:var(--navy);letter-spacing:-.01em;}
+  .hcol .span .u{font-size:15px;color:var(--muted);font-weight:500;font-family:'IBM Plex Sans';}
+  .hcol .htitle{font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gold);}
+  .hcol.h1 .htitle{color:var(--gold);}
+  .hcol.h2 .htitle{color:var(--teal);}
+  .hcol .hsub{font-family:'Newsreader',serif;font-style:italic;color:var(--muted);font-size:14px;margin:6px 0 18px;}
+  .hcol ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .hcol li{font-size:13.5px;color:var(--ink-soft);padding-left:22px;position:relative;}
+  .hcol li::before{content:"→";position:absolute;left:0;color:var(--gold-soft);font-weight:700;}
+  .hbanner{
+    grid-column:1/-1;text-align:center;font-family:'Newsreader',serif;font-style:italic;
+    font-size:15px;color:var(--muted);margin-top:4px;
+  }
+
+  /* ---------- block 6 : governance ---------- */
+  .gov{background:var(--paper-2);border:1px dashed var(--line);border-radius:14px;padding:30px 32px;}
+  .gov-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:22px;}
+  .gov-head .gt{font-family:'Fraunces',serif;font-weight:600;font-size:20px;color:var(--ink);}
+  .gov-head .gm{font-family:'Newsreader',serif;font-style:italic;color:var(--muted);font-size:15px;max-width:42ch;}
+  .gov-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+  .role-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 14px;box-shadow:var(--shadow);}
+  .role-card .rname{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  .role-card .rdesc{font-size:12px;color:var(--muted);line-height:1.4;}
+
+  /* ---------- block 7 : decision ---------- */
+  .decision{
+    background:linear-gradient(155deg,var(--navy) 0%, var(--navy-deep) 100%);
+    color:#fff;border-radius:18px;padding:48px 48px 44px;box-shadow:var(--shadow-lg);
+    position:relative;overflow:hidden;
+  }
+  .decision::after{
+    content:"";position:absolute;right:-80px;top:-80px;width:300px;height:300px;
+    background:radial-gradient(circle,rgba(201,165,95,.18),transparent 70%);
+  }
+  .decision .dlab{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-soft);font-weight:600;}
+  .decision .dmain{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(24px,3vw,34px);
+    line-height:1.18;margin:14px 0 32px;max-width:30ch;letter-spacing:-.01em;
+  }
+  .decision .dmain em{color:var(--gold-soft);font-style:normal;}
+  .dlist{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;position:relative;}
+  .ditem{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:20px 20px;}
+  .ditem .dn{font-family:'Fraunces',serif;font-size:24px;color:var(--gold-soft);font-weight:600;margin-bottom:8px;}
+  .ditem p{font-size:14px;color:#e8edf2;line-height:1.45;}
+
+  footer{margin-top:46px;border-top:1px solid var(--line);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  footer .f{font-size:11px;letter-spacing:.06em;color:var(--muted);}
+
+  /* animations */
+  @keyframes rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  .anim{opacity:0;animation:rise .7s cubic-bezier(.22,.61,.36,1) forwards;}
+
+  /* responsive */
+  @media(max-width:980px){
+    .start-grid,.limit,.horizon{grid-template-columns:1fr;}
+    .levels{grid-template-columns:1fr;}
+    .level.focus{transform:none;}
+    .caps{grid-template-columns:1fr 1fr;}
+    .gov-grid{grid-template-columns:1fr 1fr;}
+    .dlist{grid-template-columns:1fr;}
+    .horizon::before{display:none;}
+  }
+  @media(max-width:560px){
+    body{padding:28px 16px 48px;}
+    .caps,.gov-grid,.fronts{grid-template-columns:1fr;}
+  }
+  @media print{
+    body{padding:0;background:#fff;}
+    .anim{opacity:1;animation:none;}
+    section{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <!-- MASTHEAD -->
+  <header class="masthead anim" style="animation-delay:.05s">
+    <div class="mast-top">
+      <div class="brand">SeccionAmarilla.com · <b>Comité Directivo</b></div>
+      <div class="mast-meta">Sesión 2 — Definición de Fase 2</div>
+    </div>
+    <div class="eyebrow">Mapa estratégico de evolución</div>
+    <h1><span class="ph">Fase 2:</span> Mapa estratégico de evolución del portal</h1>
+    <p class="subtitle">De ajustes post-liberación a una estrategia de crecimiento orgánico a 18 meses.</p>
+
+    <div class="flowrail">
+      <span class="step"><span class="dot"></span>Punto de partida</span><span class="sep">/</span>
+      <span class="step"><span class="dot"></span>Niveles de conversación</span><span class="sep">/</span>
+      <span class="step active"><span class="dot"></span>Limitante principal</span><span class="sep">/</span>
+      <span class="step"><span class="dot"></span>Capacidades</span><span class="sep">/</span>
+      <span class="step"><span class="dot"></span>Horizonte</span><span class="sep">/</span>
+      <span class="step active"><span class="dot"></span>Decisión</span>
+    </div>
+  </header>
+
+  <!-- BLOCK 1 -->
+  <section class="anim" style="animation-delay:.12s">
+    <div class="blocklabel"><span class="n">1</span> Punto de partida</div>
+    <div class="start-grid">
+      <div>
+        <h2 class="block-title">Fase 1 liberada a producción</h2>
+        <p class="start-statement" style="margin-top:18px">Se modernizó la experiencia digital del portal sin modificar sus fundamentos comerciales, operativos y tecnológicos.</p>
+      </div>
+      <div class="fronts">
+        <div class="front"><div class="tick">Renovado</div><h4>Home</h4><div class="live">Experiencia de entrada</div></div>
+        <div class="front"><div class="tick">Renovado</div><h4>Listado de resultados</h4><div class="live">Descubrimiento</div></div>
+        <div class="front"><div class="tick">Renovado</div><h4>Ventana de información</h4><div class="live">Ficha de negocio</div></div>
+        <div class="front"><div class="tick">Renovado</div><h4>Registro de empresa</h4><div class="live">Alta de anunciante</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOCK 2 -->
+  <section class="anim" style="animation-delay:.18s">
+    <div class="blocklabel"><span class="n">2</span> Niveles de conversación</div>
+    <h2 class="block-title" style="margin-bottom:6px">Tres niveles que no deben confundirse</h2>
+    <p class="lede" style="margin-bottom:24px">La operación y la optimización son necesarias. La decisión de hoy vive en el tercer nivel.</p>
+    <div class="levels">
+      <div class="level dim">
+        <span class="lvl-tag">Nivel 1</span>
+        <h3>Operación post-liberación</h3>
+        <ul>
+          <li>Bugs</li><li>Ajustes visuales</li><li>Responsive</li><li>H1 / H2 / H3</li><li>Microformatos</li><li>Correcciones SEO técnicas</li>
+        </ul>
+        <div class="note">Necesario, pero no suficiente para definir la evolución del portal.</div>
+      </div>
+      <div class="level dim">
+        <span class="lvl-tag">Nivel 2</span>
+        <h3>Optimización</h3>
+        <ul>
+          <li>SEO técnico</li><li>Sitemap</li><li>Redirects</li><li>Indexación</li><li>Performance</li><li>Medición</li>
+        </ul>
+        <div class="note">Mejora la eficiencia del portal.</div>
+      </div>
+      <div class="level focus">
+        <span class="focus-flag">Foco de la reunión</span>
+        <span class="lvl-tag">Nivel 3</span>
+        <h3>Evolución estratégica</h3>
+        <ul>
+          <li>Calidad del contenido</li><li>Modernización de conceptos heredados</li><li>Gobierno de métricas</li><li>Evolución de búsqueda</li><li>Nuevas capacidades de monetización</li><li>Crecimiento orgánico</li>
+        </ul>
+        <div class="note">Define el valor futuro del portal.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOCK 3 -->
+  <section class="anim" style="animation-delay:.24s">
+    <div class="blocklabel"><span class="n">3</span> Limitante principal</div>
+    <div class="limit">
+      <div class="limit-core">
+        <div class="lab">Limitante principal para crecer</div>
+        <div class="big">Calidad inconsistente del contenido</div>
+        <p class="impact">No es solo un problema operativo: impacta <b>SEO, búsqueda, experiencia, interacción y crecimiento orgánico</b>.</p>
+      </div>
+      <div class="subcomp">
+        <div class="row"><span class="i">01</span><span class="t">Información desactualizada</span></div>
+        <div class="row"><span class="i">02</span><span class="t">Información insuficiente</span></div>
+        <div class="row"><span class="i">03</span><span class="t">Conceptos heredados</span></div>
+        <div class="row"><span class="i">04</span><span class="t">Taxonomías obsoletas</span></div>
+        <div class="row"><span class="i">05</span><span class="t">Ubicaciones y nombres históricos no actualizados</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOCK 4 -->
+  <section class="anim" style="animation-delay:.3s">
+    <div class="blocklabel"><span class="n">4</span> Capacidades estratégicas a definir</div>
+    <h2 class="block-title" style="margin-bottom:6px">Cuatro capacidades, no cuatro proyectos</h2>
+    <p class="lede" style="margin-bottom:24px">Una fundación, un acelerador, un control y una vía de expansión.</p>
+    <div class="caps">
+      <div class="cap c1">
+        <span class="role">Fundación</span>
+        <h4>Modernización del contenido</h4>
+        <ul>
+          <li>Depuración de información desactualizada</li>
+          <li>Enriquecimiento de fichas</li>
+          <li>Actualización de conceptos heredados</li>
+          <li>Normalización de ubicaciones</li>
+          <li>Gobierno de calidad de datos</li>
+        </ul>
+      </div>
+      <div class="cap c2">
+        <span class="role">Acelerador</span>
+        <h4>Evolución SEO estructural</h4>
+        <ul>
+          <li>Sitemap y arquitectura de indexación</li>
+          <li>Redirects y URLs descontinuadas</li>
+          <li>Google y Bing</li>
+          <li>SEO técnico como habilitador</li>
+        </ul>
+      </div>
+      <div class="cap c3">
+        <span class="role">Control ejecutivo</span>
+        <h4>Gobierno de métricas</h4>
+        <ul>
+          <li>KPIs oficiales</li>
+          <li>Sesiones vs. vistas, definidas</li>
+          <li>Dashboards institucionales</li>
+          <li>Rutina de seguimiento</li>
+          <li>Interpretación compartida</li>
+        </ul>
+      </div>
+      <div class="cap c4">
+        <span class="role">Expansión</span>
+        <h4>Evolución funcional futura</h4>
+        <ul>
+          <li>Búsqueda avanzada</li>
+          <li>Reseñas y calificaciones</li>
+          <li>Chatbot as a Service</li>
+          <li>Nuevos productos digitales</li>
+        </ul>
+        <div class="cap-foot">Opciones que requieren madurez previa.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOCK 5 -->
+  <section class="anim" style="animation-delay:.36s">
+    <div class="blocklabel"><span class="n">5</span> Horizonte de evolución</div>
+    <h2 class="block-title" style="margin-bottom:24px">Estrategia a 18 meses con valor visible en 6 meses</h2>
+    <div class="horizon">
+      <div class="hcol h1">
+        <div class="hbadge"><span class="span">0–6<span class="u"> meses</span></span></div>
+        <div class="htitle">Valor visible</div>
+        <div class="hsub">Entregables de una estrategia mayor — no “quick fixes”.</div>
+        <ul>
+          <li>Ordenar prioridades</li>
+          <li>Definir KPIs oficiales</li>
+          <li>Atender contenido desactualizado</li>
+          <li>Iniciar modernización de conceptos heredados</li>
+          <li>Estabilizar medición ejecutiva</li>
+          <li>Definir backlog estratégico de evolución</li>
+        </ul>
+      </div>
+      <div class="hcol h2">
+        <div class="hbadge"><span class="span">6–18<span class="u"> meses</span></span></div>
+        <div class="htitle">Evolución estructural</div>
+        <div class="hsub">Construcción sostenida sobre una base de calidad.</div>
+        <ul>
+          <li>Gobierno permanente de contenido</li>
+          <li>Evolución SEO estructural</li>
+          <li>Profundización de contenido</li>
+          <li>Mejora de descubrimiento</li>
+          <li>Evaluación de nuevas funcionalidades y productos</li>
+          <li>Modelo de priorización interáreas</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOCK 6 -->
+  <section class="anim" style="animation-delay:.42s">
+    <div class="blocklabel"><span class="n">6</span> Modelo de gobierno</div>
+    <div class="gov">
+      <div class="gov-head">
+        <div class="gt">Grupo temporal multidisciplinario</div>
+        <div class="gm">La evolución requiere gobierno, priorización y seguimiento; no solo ejecución de tareas.</div>
+      </div>
+      <div class="gov-grid">
+        <div class="role-card"><div class="rname">Marketing</div><div class="rdesc">Ownership y decisiones de negocio</div></div>
+        <div class="role-card"><div class="rname">PMO</div><div class="rdesc">Gestión y seguimiento</div></div>
+        <div class="role-card"><div class="rname">Tecnología</div><div class="rdesc">Habilitación técnica y factibilidad</div></div>
+        <div class="role-card"><div class="rname">Comercial</div><div class="rdesc">Validación de valor comercial</div></div>
+        <div class="role-card"><div class="rname">Comité directivo</div><div class="rdesc">Dirección estratégica y desbloqueo</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOCK 7 -->
+  <section class="anim" style="animation-delay:.48s">
+    <div class="blocklabel"><span class="n">7</span> Decisión requerida</div>
+    <div class="decision">
+      <div class="dlab">Decisión requerida del comité</div>
+      <div class="dmain">Aprobar la construcción de una <em>estrategia formal de evolución</em> del portal a 18 meses, con entregables visibles durante los primeros 6 meses.</div>
+      <div class="dlist">
+        <div class="ditem"><div class="dn">1</div><p>Confirmar que la Fase 2 será <strong>estratégica, no solo correctiva</strong>.</p></div>
+        <div class="ditem"><div class="dn">2</div><p>Autorizar la <strong>definición del plan de evolución</strong>.</p></div>
+        <div class="ditem"><div class="dn">3</div><p>Establecer un <strong>grupo responsable</strong> con ownership, gestión y seguimiento.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="f">SeccionAmarilla.com — Estrategia de evolución del portal</span>
+    <span class="f">Documento de comité · Sesión 2</span>
+  </footer>
+
+</div>
+</body>
+</html>
